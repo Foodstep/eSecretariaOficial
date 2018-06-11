@@ -1,12 +1,15 @@
 ﻿@using eSecretaria.Models;
 @{
     ViewBag.Title = "Index";
-Layout = "~/Views/Shared/_Layout.cshtml";
-List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
 }
 
 <h2>Marcação de Aulas</h2>
-
+<div class="alert  alert-dismissible fade in">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong class="titulo-alert"></strong> <span class="content-alert"></span>
+</div>
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -21,7 +24,7 @@ List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
                 <form id="form-marca-aula">
                     <div class="row">
                         <div class="form-group">
-                            <input type="hidden" id="date-format" />
+                            <input type="hidden" name="data" id="date-format" />
                             <div class="col-sm-6">
                                 <label>Sala</label>
                                 <select class="form-control" id="sala" name="sala">
@@ -35,11 +38,11 @@ List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
                         <div class="form-group">
                             <div class="col-sm-6">
                                 <label>Inicio</label>
-                                <input class="form-control" type="text" id="inicio" name="inicio" />
+                                <input class="form-control" type="text" id="inicio" name="inicio" maxlength="5"/>
                             </div>
                             <div class="col-sm-6">
                                 <label>Fim</label>
-                                <input class="form-control" type="text" id="fim" name="fim" />
+                                <input class="form-control" type="text" id="fim" name="fim" maxlength="5" />
                             </div>
                         </div>
                     </div>
@@ -74,8 +77,11 @@ List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
     <script src="~/Scripts/fullcalendar.js"></script>
     <script src=" ~/Scripts/pt-br.js"></script>
     <script>
+        $(document).ready(function () {
+            $('#inicio, #fim').mask('00:00');
+        });
         (function ($) {
-
+            
             $('#calendar').fullCalendar({
                 defaultView: 'agendaWeek',
                 selectable: true,
@@ -97,6 +103,7 @@ List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
 
                     //alert('clicked ' + date.format());
                 },
+                events: '/Principal/GetAulas',
                 //select: function (startDate, endDate, jsEvent, view) {
                 //    alert('selected ' + startDate.format() + ' to ' + endDate.format());
                 //},
@@ -135,11 +142,22 @@ List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
             console.log($("#form-marca-aula").serialize());
             $.ajax({
                 method: "POST",
-                url: "Principal/MarcarAula?"+$("#form-marca-aula").serialize(),
-                
+                url: "/Principal/MarcarAula?" + $("#form-marca-aula").serialize(),
+
             }).done(function (msg) {
-                    alert("Data Saved: " + msg);
-                });
+                if (msg.success) {
+                    $('.alert').addClass("alert-success");
+                    $(".titulo-alert").html("Sucesso! ");
+                    $('.content-alert').html(msg.message);
+                    $('.alert').fadeIn();
+                    $('#calendar').fullCalendar('refetchEvents');
+                } else {
+                    $('.alert').addClass("alert-success");
+                    $(".titulo-alert").html("Erro! ");
+                    $('.content-alert').html(msg.message);
+                    $('.alert').fadeIn();
+                }
+            });
 
             //var event = {
             //    //id: 1,
@@ -152,11 +170,11 @@ List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
         })
 
         $("#alunos").select2();
-            //var calendar = $('#calendar').fullCalendar('getCalendar');
+                //var calendar = $('#calendar').fullCalendar('getCalendar');
 
-                            //calendar.on('dayClick', function (date, jsEvent, view) {
-                            //    console.log('clicked on ' + date.format());
-                            //});
+                                //calendar.on('dayClick', function (date, jsEvent, view) {
+                                //    console.log('clicked on ' + date.format());
+                                //});
     </script>
 
 }

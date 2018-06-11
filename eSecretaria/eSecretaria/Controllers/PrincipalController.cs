@@ -23,21 +23,53 @@ namespace eSecretaria.Controllers
 
         public JsonResult MarcarAula(MarcarAula aula)
         {
-            eSecretariaEntities context = new eSecretariaEntities();
-            AULA aulaDb = new AULA();
-            //testenado git
-            aulaDb.PROFESSOR = context.PROFESSOR.FirstOrDefault();
-            aulaDb.HORA_FIM = TimeSpan.Parse(aula.fim);
-            aulaDb.HORA_INICIO = TimeSpan.Parse(aula.inicio);
-
-            aulaDb.ALUNO = context.ALUNO.Where(x => aula.alunos.Contains(x.ID_ALUNO)).ToList();
-            context.AULA.Add(aulaDb);
-            context.SaveChanges();
-            return Json(new ClasseRespostaCreate()
+            try
             {
-                success = false,
-                message = "Erro ao criar aluno - cod 2"
-            });
+                eSecretariaEntities context = new eSecretariaEntities();
+                AULA aulaDb = new AULA();
+                //testenado git
+                aulaDb.DATA_AULA = aula.data;
+                aulaDb.PROFESSOR = context.PROFESSOR.FirstOrDefault();
+                aulaDb.HORA_FIM = TimeSpan.Parse(aula.fim);
+                aulaDb.HORA_INICIO = TimeSpan.Parse(aula.inicio);
+
+                aulaDb.ALUNO = context.ALUNO.Where(x => aula.alunos.Contains(x.ID_ALUNO)).ToList();
+                context.AULA.Add(aulaDb);
+                context.SaveChanges();
+                return Json(new ClasseRespostaCreate()
+                {
+                    success = true,
+                    message = "Aula marcada com sucesso"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new ClasseRespostaCreate()
+                {
+                    success = false,
+                    message = "Erro ao criar aluno - cod 2"
+                });
+            } 
+            
+        }
+
+        [HttpGet]
+        public JsonResult GetAulas()
+        {
+            eSecretariaEntities context = new eSecretariaEntities();
+            List<AULA> listaAulas =  context.AULA.ToList();
+
+            
+            var aulas = listaAulas.Select(x => new JsonAula()
+            {
+                allDay = false,
+                start = x.DATA_AULA.ToString("yyyy-MM-dd") + "T" + x.HORA_INICIO.ToString(),
+                end = x.DATA_AULA.ToString("yyyy-MM-dd") + "T" + x.HORA_FIM.ToString(),
+                title = "Aula teste"
+            }).ToList();
+
+            return Json(aulas,JsonRequestBehavior.AllowGet);
+
         }
     }
 }
