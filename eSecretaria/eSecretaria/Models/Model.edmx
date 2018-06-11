@@ -1,0 +1,287 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="eSecretariaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ALUNO">
+          <Key>
+            <PropertyRef Name="ID_ALUNO" />
+          </Key>
+          <Property Name="ID_ALUNO" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOME_ALUNO" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="NOME_RESPONSAVEL" Type="varchar" MaxLength="150" />
+          <Property Name="TELEFONE_CONTATO" Type="varchar" MaxLength="15" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ASSOC_AULA_ALUNO">
+          <Key>
+            <PropertyRef Name="ID_AULA" />
+            <PropertyRef Name="ID_ALUNO" />
+          </Key>
+          <Property Name="ID_AULA" Type="int" Nullable="false" />
+          <Property Name="ID_ALUNO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AULA">
+          <Key>
+            <PropertyRef Name="ID_AULA" />
+          </Key>
+          <Property Name="ID_AULA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_PROFESSOR" Type="int" />
+          <Property Name="DATA_AULA" Type="date" Nullable="false" />
+          <Property Name="HORA_INICIO" Type="time" Precision="7" />
+          <Property Name="HORA_FIM" Type="time" Precision="7" />
+        </EntityType>
+        <EntityType Name="DISCIPLINA">
+          <Key>
+            <PropertyRef Name="ID_DISCIPLINA" />
+          </Key>
+          <Property Name="ID_DISCIPLINA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOME_DISCIPLINA" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PROFESSOR">
+          <Key>
+            <PropertyRef Name="ID_PROFESSOR" />
+          </Key>
+          <Property Name="ID_PROFESSOR" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_DISCIPLINA" Type="int" />
+          <Property Name="NOME_PROFESSOR" Type="varchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ASSOC_AU_REFERENCE_ALUNO">
+          <End Role="ALUNO" Type="Self.ALUNO" Multiplicity="1" />
+          <End Role="ASSOC_AULA_ALUNO" Type="Self.ASSOC_AULA_ALUNO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ALUNO">
+              <PropertyRef Name="ID_ALUNO" />
+            </Principal>
+            <Dependent Role="ASSOC_AULA_ALUNO">
+              <PropertyRef Name="ID_ALUNO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ASSOC_AU_REFERENCE_AULA">
+          <End Role="AULA" Type="Self.AULA" Multiplicity="1" />
+          <End Role="ASSOC_AULA_ALUNO" Type="Self.ASSOC_AULA_ALUNO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AULA">
+              <PropertyRef Name="ID_AULA" />
+            </Principal>
+            <Dependent Role="ASSOC_AULA_ALUNO">
+              <PropertyRef Name="ID_AULA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AULA_REFERENCE_PROFESSO">
+          <End Role="PROFESSOR" Type="Self.PROFESSOR" Multiplicity="0..1" />
+          <End Role="AULA" Type="Self.AULA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PROFESSOR">
+              <PropertyRef Name="ID_PROFESSOR" />
+            </Principal>
+            <Dependent Role="AULA">
+              <PropertyRef Name="ID_PROFESSOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROFESSO_REFERENCE_DISCIPLI">
+          <End Role="DISCIPLINA" Type="Self.DISCIPLINA" Multiplicity="0..1" />
+          <End Role="PROFESSOR" Type="Self.PROFESSOR" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DISCIPLINA">
+              <PropertyRef Name="ID_DISCIPLINA" />
+            </Principal>
+            <Dependent Role="PROFESSOR">
+              <PropertyRef Name="ID_DISCIPLINA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="eSecretariaModelStoreContainer">
+          <EntitySet Name="ALUNO" EntityType="Self.ALUNO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ASSOC_AULA_ALUNO" EntityType="Self.ASSOC_AULA_ALUNO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AULA" EntityType="Self.AULA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DISCIPLINA" EntityType="Self.DISCIPLINA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PROFESSOR" EntityType="Self.PROFESSOR" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ASSOC_AU_REFERENCE_ALUNO" Association="Self.FK_ASSOC_AU_REFERENCE_ALUNO">
+            <End Role="ALUNO" EntitySet="ALUNO" />
+            <End Role="ASSOC_AULA_ALUNO" EntitySet="ASSOC_AULA_ALUNO" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ASSOC_AU_REFERENCE_AULA" Association="Self.FK_ASSOC_AU_REFERENCE_AULA">
+            <End Role="AULA" EntitySet="AULA" />
+            <End Role="ASSOC_AULA_ALUNO" EntitySet="ASSOC_AULA_ALUNO" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AULA_REFERENCE_PROFESSO" Association="Self.FK_AULA_REFERENCE_PROFESSO">
+            <End Role="PROFESSOR" EntitySet="PROFESSOR" />
+            <End Role="AULA" EntitySet="AULA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROFESSO_REFERENCE_DISCIPLI" Association="Self.FK_PROFESSO_REFERENCE_DISCIPLI">
+            <End Role="DISCIPLINA" EntitySet="DISCIPLINA" />
+            <End Role="PROFESSOR" EntitySet="PROFESSOR" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="eSecretariaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ALUNO">
+          <Key>
+            <PropertyRef Name="ID_ALUNO" />
+          </Key>
+          <Property Name="ID_ALUNO" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOME_ALUNO" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NOME_RESPONSAVEL" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="TELEFONE_CONTATO" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="AULA" Relationship="Self.ASSOC_AULA_ALUNO" FromRole="ALUNO" ToRole="AULA" />
+        </EntityType>
+        <EntityType Name="AULA">
+          <Key>
+            <PropertyRef Name="ID_AULA" />
+          </Key>
+          <Property Name="ID_AULA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_PROFESSOR" Type="Int32" />
+          <Property Name="DATA_AULA" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="HORA_INICIO" Type="Time" Precision="7" />
+          <Property Name="HORA_FIM" Type="Time" Precision="7" />
+          <NavigationProperty Name="PROFESSOR" Relationship="Self.FK_AULA_REFERENCE_PROFESSO" FromRole="AULA" ToRole="PROFESSOR" />
+          <NavigationProperty Name="ALUNO" Relationship="Self.ASSOC_AULA_ALUNO" FromRole="AULA" ToRole="ALUNO" />
+        </EntityType>
+        <EntityType Name="DISCIPLINA">
+          <Key>
+            <PropertyRef Name="ID_DISCIPLINA" />
+          </Key>
+          <Property Name="ID_DISCIPLINA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOME_DISCIPLINA" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="PROFESSOR" Relationship="Self.FK_PROFESSO_REFERENCE_DISCIPLI" FromRole="DISCIPLINA" ToRole="PROFESSOR" />
+        </EntityType>
+        <EntityType Name="PROFESSOR">
+          <Key>
+            <PropertyRef Name="ID_PROFESSOR" />
+          </Key>
+          <Property Name="ID_PROFESSOR" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_DISCIPLINA" Type="Int32" />
+          <Property Name="NOME_PROFESSOR" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="AULA" Relationship="Self.FK_AULA_REFERENCE_PROFESSO" FromRole="PROFESSOR" ToRole="AULA" />
+          <NavigationProperty Name="DISCIPLINA" Relationship="Self.FK_PROFESSO_REFERENCE_DISCIPLI" FromRole="PROFESSOR" ToRole="DISCIPLINA" />
+        </EntityType>
+        <Association Name="FK_AULA_REFERENCE_PROFESSO">
+          <End Role="PROFESSOR" Type="Self.PROFESSOR" Multiplicity="0..1" />
+          <End Role="AULA" Type="Self.AULA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PROFESSOR">
+              <PropertyRef Name="ID_PROFESSOR" />
+            </Principal>
+            <Dependent Role="AULA">
+              <PropertyRef Name="ID_PROFESSOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROFESSO_REFERENCE_DISCIPLI">
+          <End Role="DISCIPLINA" Type="Self.DISCIPLINA" Multiplicity="0..1" />
+          <End Role="PROFESSOR" Type="Self.PROFESSOR" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DISCIPLINA">
+              <PropertyRef Name="ID_DISCIPLINA" />
+            </Principal>
+            <Dependent Role="PROFESSOR">
+              <PropertyRef Name="ID_DISCIPLINA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ASSOC_AULA_ALUNO">
+          <End Role="ALUNO" Type="Self.ALUNO" Multiplicity="*" />
+          <End Role="AULA" Type="Self.AULA" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="eSecretariaEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ALUNO" EntityType="Self.ALUNO" />
+          <EntitySet Name="AULA" EntityType="Self.AULA" />
+          <EntitySet Name="DISCIPLINA" EntityType="Self.DISCIPLINA" />
+          <EntitySet Name="PROFESSOR" EntityType="Self.PROFESSOR" />
+          <AssociationSet Name="FK_AULA_REFERENCE_PROFESSO" Association="Self.FK_AULA_REFERENCE_PROFESSO">
+            <End Role="PROFESSOR" EntitySet="PROFESSOR" />
+            <End Role="AULA" EntitySet="AULA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROFESSO_REFERENCE_DISCIPLI" Association="Self.FK_PROFESSO_REFERENCE_DISCIPLI">
+            <End Role="DISCIPLINA" EntitySet="DISCIPLINA" />
+            <End Role="PROFESSOR" EntitySet="PROFESSOR" />
+          </AssociationSet>
+          <AssociationSet Name="ASSOC_AULA_ALUNO" Association="Self.ASSOC_AULA_ALUNO">
+            <End Role="ALUNO" EntitySet="ALUNO" />
+            <End Role="AULA" EntitySet="AULA" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="eSecretariaModelStoreContainer" CdmEntityContainer="eSecretariaEntities">
+          <EntitySetMapping Name="ALUNO">
+            <EntityTypeMapping TypeName="eSecretariaModel.ALUNO">
+              <MappingFragment StoreEntitySet="ALUNO">
+                <ScalarProperty Name="ID_ALUNO" ColumnName="ID_ALUNO" />
+                <ScalarProperty Name="NOME_ALUNO" ColumnName="NOME_ALUNO" />
+                <ScalarProperty Name="NOME_RESPONSAVEL" ColumnName="NOME_RESPONSAVEL" />
+                <ScalarProperty Name="TELEFONE_CONTATO" ColumnName="TELEFONE_CONTATO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AULA">
+            <EntityTypeMapping TypeName="eSecretariaModel.AULA">
+              <MappingFragment StoreEntitySet="AULA">
+                <ScalarProperty Name="ID_AULA" ColumnName="ID_AULA" />
+                <ScalarProperty Name="ID_PROFESSOR" ColumnName="ID_PROFESSOR" />
+                <ScalarProperty Name="DATA_AULA" ColumnName="DATA_AULA" />
+                <ScalarProperty Name="HORA_INICIO" ColumnName="HORA_INICIO" />
+                <ScalarProperty Name="HORA_FIM" ColumnName="HORA_FIM" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DISCIPLINA">
+            <EntityTypeMapping TypeName="eSecretariaModel.DISCIPLINA">
+              <MappingFragment StoreEntitySet="DISCIPLINA">
+                <ScalarProperty Name="ID_DISCIPLINA" ColumnName="ID_DISCIPLINA" />
+                <ScalarProperty Name="NOME_DISCIPLINA" ColumnName="NOME_DISCIPLINA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PROFESSOR">
+            <EntityTypeMapping TypeName="eSecretariaModel.PROFESSOR">
+              <MappingFragment StoreEntitySet="PROFESSOR">
+                <ScalarProperty Name="ID_PROFESSOR" ColumnName="ID_PROFESSOR" />
+                <ScalarProperty Name="ID_DISCIPLINA" ColumnName="ID_DISCIPLINA" />
+                <ScalarProperty Name="NOME_PROFESSOR" ColumnName="NOME_PROFESSOR" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="ASSOC_AULA_ALUNO" TypeName="eSecretariaModel.ASSOC_AULA_ALUNO" StoreEntitySet="ASSOC_AULA_ALUNO">
+            <EndProperty Name="ALUNO">
+              <ScalarProperty Name="ID_ALUNO" ColumnName="ID_ALUNO" />
+            </EndProperty>
+            <EndProperty Name="AULA">
+              <ScalarProperty Name="ID_AULA" ColumnName="ID_AULA" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

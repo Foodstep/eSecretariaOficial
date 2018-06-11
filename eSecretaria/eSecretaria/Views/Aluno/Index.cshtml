@@ -1,0 +1,81 @@
+﻿@model eSecretaria.Models.ALUNO
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="alert  alert-dismissible fade in">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong class="titulo-alert"></strong> <span class="content-alert"></span>
+</div>
+@using (Ajax.BeginForm("Cadastrar", "Aluno", new AjaxOptions { HttpMethod = "POST", OnSuccess = "testeReturn" }, new { @id = "AjaxformId", @class = "form-horizontal", role = "form" }))
+{
+    <h3>Cadastro Aluno</h3>
+    <div class=" row form-group">
+        <div class="col-sm-6">
+            <label>Nome do Aluno*</label>
+            @Html.TextBoxFor(m => m.NOME_ALUNO, new { @class = "form-control" })
+        </div>
+
+        <div class="col-sm-6">
+            <label>Nome do Responsável</label>
+            @Html.TextBoxFor(m => m.NOME_RESPONSAVEL, new { @class = "form-control" })
+        </div>
+
+        <div class="col-sm-6">
+            <label>Telefone Contato*</label>
+            @Html.TextBoxFor(m => m.TELEFONE_CONTATO, new { @class = "form-control tel-mask" })
+        </div>
+        <div class="col-sm-6" >
+            <button style="margin-top: 25px" type="submit" class="btn btn-success">Salvar</button>
+        </div>
+    </div>
+
+}
+
+    <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr style="text-align:left;">
+                <th>Nome Aluno</th>
+                <th>Nome Responsável</th>
+                <th>Telefone Contato</th>
+            </tr>
+        </thead>
+    </table>
+     
+
+        @section scripts {
+            <script>
+                $(document).ready(function () {
+                    
+                    $('#example').DataTable({
+                        "bPaginate": false,
+                        "bFilter": false,
+                        "bInfo": false,
+                        ajax: {
+                            url: "http://localhost:49564/Aluno/GetAll",
+                            type: 'POST'
+                        },
+                        columns: [
+                            { data: "NOME_ALUNO" },
+                            { data: "NOME_RESPONSAVEL" },
+                            { data: "TELEFONE_CONTATO" },
+                            
+                        ]
+                       
+                    });
+                    $('.tel-mask').mask('(00) 00000-0000');
+                    //$('#example').DataTable({
+                    //    "ajax": "Aluno/GetAll"
+                    //});
+                });
+                function testeReturn(response) {
+                    if (response.success) {
+                        $('.alert').addClass("alert-success");
+                        $(".titulo-alert").html("Sucesso! ");
+                        $('.content-alert').html(response.message);
+                        $('.alert').fadeIn();
+                        $('#example').DataTable().ajax.reload();
+                    }
+                }
+            </script>
+        }

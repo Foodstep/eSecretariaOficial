@@ -1,0 +1,162 @@
+﻿@using eSecretaria.Models;
+@{
+    ViewBag.Title = "Index";
+Layout = "~/Views/Shared/_Layout.cshtml";
+List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
+}
+
+<h2>Marcação de Aulas</h2>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 id="dia-escolhido" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="form-marca-aula">
+                    <div class="row">
+                        <div class="form-group">
+                            <input type="hidden" id="date-format" />
+                            <div class="col-sm-6">
+                                <label>Sala</label>
+                                <select class="form-control" id="sala" name="sala">
+                                    <option value="Sala 1">Sala 1</option>
+                                    <option value="Sala 2">Sala 2</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label>Inicio</label>
+                                <input class="form-control" type="text" id="inicio" name="inicio" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Fim</label>
+                                <input class="form-control" type="text" id="fim" name="fim" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label>Alunos</label><br>
+                                <select class="form-control" id="alunos" name="alunos" multiple="multiple">
+                                    @if (comboAluno != null)
+                                    {
+                                        foreach (BaseCombo aluno in comboAluno)
+                                        {
+                                            <option value="@Html.Raw(aluno.value)">@Html.Raw(aluno.text)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="marcar" class="btn btn-success" data-dismiss="modal">Marcar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id='calendar'></div>
+@section scripts {
+    <script src="~/Scripts/fullcalendar.js"></script>
+    <script src=" ~/Scripts/pt-br.js"></script>
+    <script>
+        (function ($) {
+
+            $('#calendar').fullCalendar({
+                defaultView: 'agendaWeek',
+                selectable: true,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek,agendaDay'
+                },
+                resources: [
+                    { id: 'a', title: 'Deborah' },
+                    { id: 'b', title: 'Marcelos' },
+                    { id: 'c', title: 'Ciro' }
+                ],
+                dayClick: function (date, jsEvent, view) {
+                    $("#inicio").val(date.format("HH:mm"))
+                    $("#date-format").val(date.format("YYYY-MM-DD"));
+                    $("#dia-escolhido").html("Marcar Aula para o dia: " + date.format("D/MM") + " Prof: Deborah");
+                    $("#myModal").modal();
+
+                    //alert('clicked ' + date.format());
+                },
+                //select: function (startDate, endDate, jsEvent, view) {
+                //    alert('selected ' + startDate.format() + ' to ' + endDate.format());
+                //},
+                //events: [
+                //    {
+                //        title: 'event1',
+                //        start: '2018-05-20',
+                //        allDay: true
+                //    },
+                //    {
+                //        title: 'event2',
+                //        start: '2018-05-21',
+                //        end: '2018-05-22'
+                //    },
+                //    {
+                //        title: 'event3',
+                //        start: '2018-05-23T12:30:00',
+                //        allDay: false // will make the time show
+                //    }
+                //],
+                eventClick: function (calEvent, jsEvent, view) {
+
+                    //alert('Event: ' + calEvent.title);
+                    //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+                    //alert('View: ' + view.name);
+
+                    // change the border color just for fun
+                    $(this).css('background-color', 'green');
+
+                }
+            });
+
+        }(jQuery));
+
+        $("#marcar").click(function () {
+            console.log($("#form-marca-aula").serialize());
+            $.ajax({
+                method: "POST",
+                url: "Principal/MarcarAula?"+$("#form-marca-aula").serialize(),
+                
+            }).done(function (msg) {
+                    alert("Data Saved: " + msg);
+                });
+
+            //var event = {
+            //    //id: 1,
+            //    //title: $("#sala").val(),
+            //    //start: $("#date-format").val() + "T" + $("#inicio").val(),
+            //    //end: $("#date-format").val() + "T" + $("#fim").val()
+            //};
+            //console.log(event);
+            $('#calendar').fullCalendar('renderEvent', event, true);
+        })
+
+        $("#alunos").select2();
+            //var calendar = $('#calendar').fullCalendar('getCalendar');
+
+                            //calendar.on('dayClick', function (date, jsEvent, view) {
+                            //    console.log('clicked on ' + date.format());
+                            //});
+    </script>
+
+}

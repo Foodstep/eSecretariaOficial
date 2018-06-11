@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="cb7e853bb0c84e6d81efb34daf70e899" Name="Diagram1">
+        <EntityTypeShape EntityType="eSecretariaModel.ALUNO" Width="1.5" PointX="3" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="eSecretariaModel.AULA" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="eSecretariaModel.DISCIPLINA" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="eSecretariaModel.PROFESSOR" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
+        <AssociationConnector Association="eSecretariaModel.FK_AULA_REFERENCE_PROFESSO" ManuallyRouted="false" />
+        <AssociationConnector Association="eSecretariaModel.FK_PROFESSO_REFERENCE_DISCIPLI" ManuallyRouted="false" />
+        <AssociationConnector Association="eSecretariaModel.ASSOC_AULA_ALUNO" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
