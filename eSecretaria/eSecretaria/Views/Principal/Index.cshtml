@@ -3,6 +3,7 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<BaseCombo> comboAluno = ViewBag.TodosAlunos;
+    List<BaseCombo> comboProfessor = ViewBag.TodosProfessores;
 }
 
 <h2>Marcação de Aulas</h2>
@@ -10,6 +11,26 @@
     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     <strong class="titulo-alert"></strong> <span class="content-alert"></span>
 </div>
+<form id="form-professor">
+    <div class="row">
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label>Professor</label><br>
+                <select class="form-control" id="professor" name="professor">
+                    @if (comboProfessor != null)
+                    {
+                        foreach (BaseCombo professor in comboProfessor)
+                        {
+                            <option value="@Html.Raw(professor.value)">@Html.Raw(professor.text)</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div style="margin-top:20px" id='calendar'></div>
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -72,71 +93,78 @@
     </div>
 </div>
 
-<div id='calendar'></div>
 @section scripts {
     <script src="~/Scripts/fullcalendar.js"></script>
     <script src=" ~/Scripts/pt-br.js"></script>
     <script>
         $(document).ready(function () {
             $('#inicio, #fim').mask('00:00');
+
+            $('#professor').change(function () {
+                $('#calendar').fullCalendar('destroy');
+                MontarAula();
+            })
         });
-        (function ($) {
-            
-            $('#calendar').fullCalendar({
-                defaultView: 'agendaWeek',
-                selectable: true,
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'agendaWeek,agendaDay'
-                },
-                resources: [
-                    { id: 'a', title: 'Deborah' },
-                    { id: 'b', title: 'Marcelos' },
-                    { id: 'c', title: 'Ciro' }
-                ],
-                dayClick: function (date, jsEvent, view) {
-                    $("#inicio").val(date.format("HH:mm"))
-                    $("#date-format").val(date.format("YYYY-MM-DD"));
-                    $("#dia-escolhido").html("Marcar Aula para o dia: " + date.format("D/MM") + " Prof: Deborah");
-                    $("#myModal").modal();
+        function MontarAula() {
+            (function ($) {
 
-                    //alert('clicked ' + date.format());
-                },
-                events: '/Principal/GetAulas',
-                //select: function (startDate, endDate, jsEvent, view) {
-                //    alert('selected ' + startDate.format() + ' to ' + endDate.format());
-                //},
-                //events: [
-                //    {
-                //        title: 'event1',
-                //        start: '2018-05-20',
-                //        allDay: true
-                //    },
-                //    {
-                //        title: 'event2',
-                //        start: '2018-05-21',
-                //        end: '2018-05-22'
-                //    },
-                //    {
-                //        title: 'event3',
-                //        start: '2018-05-23T12:30:00',
-                //        allDay: false // will make the time show
-                //    }
-                //],
-                eventClick: function (calEvent, jsEvent, view) {
+                $('#calendar').fullCalendar({
+                    defaultView: 'agendaWeek',
+                    selectable: true,
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'agendaWeek,agendaDay'
+                    },
+                    events: '/Principal/GetAulas?' + $("#form-professor").serialize(),
+                    resources: [
+                        { id: 'a', title: 'Deborah' },
+                        { id: 'b', title: 'Marcelos' },
+                        { id: 'c', title: 'Ciro' }
+                    ],
+                    dayClick: function (date, jsEvent, view) {
+                        $("#inicio").val(date.format("HH:mm"))
+                        $("#date-format").val(date.format("YYYY-MM-DD"));
+                        $("#dia-escolhido").html("Marcar Aula para o dia: " + date.format("D/MM") + " Prof: Deborah");
+                        $("#myModal").modal();
 
-                    //alert('Event: ' + calEvent.title);
-                    //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-                    //alert('View: ' + view.name);
+                        //alert('clicked ' + date.format());
+                    },
+                    //select: function (startDate, endDate, jsEvent, view) {
+                    //    alert('selected ' + startDate.format() + ' to ' + endDate.format());
+                    //},
+                    //events: [
+                    //    {
+                    //        title: 'event1',
+                    //        start: '2018-05-20',
+                    //        allDay: true
+                    //    },
+                    //    {
+                    //        title: 'event2',
+                    //        start: '2018-05-21',
+                    //        end: '2018-05-22'
+                    //    },
+                    //    {
+                    //        title: 'event3',
+                    //        start: '2018-05-23T12:30:00',
+                    //        allDay: false // will make the time show
+                    //    }
+                    //],
+                    eventClick: function (calEvent, jsEvent, view) {
 
-                    // change the border color just for fun
-                    $(this).css('background-color', 'green');
+                        //alert('Event: ' + calEvent.title);
+                        //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+                        //alert('View: ' + view.name);
 
-                }
-            });
+                        // change the border color just for fun
+                        $(this).css('background-color', 'green');
 
-        }(jQuery));
+                    }
+                });
+
+            }(jQuery));
+        }
+        
 
         $("#marcar").click(function () {
             console.log($("#form-marca-aula").serialize());

@@ -13,6 +13,11 @@ namespace eSecretaria.Controllers
         public ActionResult Index()
         {
             eSecretariaEntities context = new eSecretariaEntities();
+            ViewBag.TodosProfessores = context.PROFESSOR.Select(x => new BaseCombo()
+            {
+                text = x.NOME_PROFESSOR,
+                value = x.ID_PROFESSOR.ToString()
+            }).ToList();
             ViewBag.TodosAlunos = context.ALUNO.Select(x => new BaseCombo()
             {
                 text = x.NOME_ALUNO,
@@ -54,10 +59,10 @@ namespace eSecretaria.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetAulas()
+        public JsonResult GetAulas(int professor)
         {
             eSecretariaEntities context = new eSecretariaEntities();
-            List<AULA> listaAulas =  context.AULA.ToList();
+            List<AULA> listaAulas =  context.AULA.Where(x=> x.PROFESSOR.ID_PROFESSOR == professor).ToList();
 
             
             var aulas = listaAulas.Select(x => new JsonAula()
